@@ -16,33 +16,42 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package rip.hippo.mosey.util;
+package rip.hippo.mosey.asm.wrapper;
 
-import java.util.Random;
+import org.objectweb.asm.tree.AnnotationNode;
+import org.objectweb.asm.tree.FieldNode;
+
+import java.util.ArrayList;
 
 /**
  * @author Hippo
- * @version 1.0.0, 6/24/20
+ * @version 1.0.0, 7/1/20
  * @since 1.0.0
  */
-public enum MathUtil {
-    ;
-    private static final Random RANDOM = new Random();
+public final class FieldWrapper {
 
-    public static int generate(int min, int max) {
-        return RANDOM.nextInt(max - min) + min;
+    private final FieldNode fieldNode;
+
+    public FieldWrapper(FieldNode fieldNode) {
+        this.fieldNode = fieldNode;
     }
 
-    public static boolean chance(int percentage) {
-        return percentage >= generate(0, 101);
+    public void addModifier(int modifier) {
+        fieldNode.access |= modifier;
     }
 
-    public static boolean randomBoolean() {
-        return RANDOM.nextBoolean();
+    public void removeModifier(int modifier) {
+        fieldNode.access &= ~modifier;
     }
 
-    public static int randomInt(int bound) {
-        return RANDOM.nextInt(bound);
+    public boolean hasModifier(int modifier) {
+        return (fieldNode.access & modifier) != 0;
     }
 
+    public void addVisibleAnnotation(AnnotationNode annotationNode) {
+        if (fieldNode.visibleAnnotations == null) {
+            fieldNode.visibleAnnotations = new ArrayList<>(1);
+        }
+        fieldNode.visibleAnnotations.add(annotationNode);
+    }
 }

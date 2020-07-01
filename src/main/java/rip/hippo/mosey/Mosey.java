@@ -19,8 +19,8 @@
 package rip.hippo.mosey;
 
 import rip.hippo.mosey.configuration.Configuration;
-import rip.hippo.mosey.jar.JarExporter;
-import rip.hippo.mosey.jar.JarLoader;
+import rip.hippo.mosey.jar.impl.StandardJarExporter;
+import rip.hippo.mosey.jar.impl.StandardJarLoader;
 import rip.hippo.mosey.jar.resource.Resource;
 import rip.hippo.mosey.jar.resource.ResourceManager;
 import rip.hippo.mosey.jar.resource.impl.ClassResource;
@@ -36,15 +36,15 @@ import java.io.File;
  */
 public final class Mosey {
 
-    private final JarLoader jarLoader;
-    private final JarExporter jarExporter;
+    private final StandardJarLoader jarLoader;
+    private final StandardJarExporter jarExporter;
     private final Configuration configuration;
     private final ResourceManager resourceManager;
     private final TransformerManager transformerManager;
 
     public Mosey(Configuration configuration) {
-        this.jarLoader = new JarLoader();
-        this.jarExporter = new JarExporter();
+        this.jarLoader = new StandardJarLoader();
+        this.jarExporter = new StandardJarExporter();
         this.configuration = configuration;
         this.resourceManager = new ResourceManager();
         this.transformerManager = new TransformerManager(configuration, resourceManager);
@@ -67,7 +67,7 @@ public final class Mosey {
         for (Resource resource : resourceManager.getResources()) {
             if(resource instanceof ClassResource) {
                 ClassResource classResource = (ClassResource) resource;
-                transformerManager.transform(classResource.getClassNode());
+                transformerManager.transform(classResource.getClassWrapper());
             }
         }
         Logger.info("Jar transformed");

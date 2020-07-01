@@ -22,6 +22,7 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
+import rip.hippo.mosey.asm.wrapper.ClassWrapper;
 import rip.hippo.mosey.transformer.Transformer;
 
 import java.util.ArrayList;
@@ -36,24 +37,9 @@ import java.util.ArrayList;
 public final class BadAnnotationTransformer implements Transformer {
 
     @Override
-    public void transform(ClassNode classNode) {
-        if (classNode.visibleAnnotations == null) {
-            classNode.visibleAnnotations = new ArrayList<>(1);
-        }
-        classNode.visibleAnnotations.add(new AnnotationNode(""));
-
-        for (MethodNode method : classNode.methods) {
-            if (method.visibleAnnotations == null) {
-                method.visibleAnnotations = new ArrayList<>(1);
-            }
-            method.visibleAnnotations.add(new AnnotationNode(""));
-        }
-
-        for (FieldNode field : classNode.fields) {
-            if (field.visibleAnnotations == null) {
-                field.visibleAnnotations = new ArrayList<>(1);
-            }
-            field.visibleAnnotations.add(new AnnotationNode(""));
-        }
+    public void transform(ClassWrapper classWrapper) {
+        classWrapper.addVisibleAnnotation(new AnnotationNode(""));
+        classWrapper.applyMethods(method -> method.addVisibleAnnotation(new AnnotationNode("")));
+        classWrapper.applyFields(field -> field.addVisibleAnnotation(new AnnotationNode("")));
     }
 }

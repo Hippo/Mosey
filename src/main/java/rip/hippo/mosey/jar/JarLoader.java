@@ -18,57 +18,16 @@
 
 package rip.hippo.mosey.jar;
 
-import rip.hippo.mosey.asm.ClassHierarchy;
 import rip.hippo.mosey.jar.resource.ResourceManager;
-import rip.hippo.mosey.jar.resource.impl.ClassResource;
-import rip.hippo.mosey.jar.resource.impl.JarResource;
-import rip.hippo.mosey.util.IOUtil;
-import org.objectweb.asm.tree.ClassNode;
-import org.tinylog.Logger;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 /**
  * @author Hippo
- * @version 1.0.0, 6/23/20
+ * @version 1.0.0, 6/30/20
  * @since 1.0.0
  */
-public final class JarLoader {
-
-    public void loadJar(File input, ResourceManager resourceManager, boolean library) {
-
-        Logger.info(String.format("Loading %s " + (library ? "(library) " : ""), input.getAbsolutePath()));
-
-        try (JarFile jarFile = new JarFile(input)) {
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry jarEntry = entries.nextElement();
-                byte[] bytes = IOUtil.toByteArray(jarFile, jarEntry);
-                Logger.info(String.format("Loading resource %s", jarEntry.getName()));
-
-                if (library) {
-                    if(jarEntry.getName().contains(".class")) {
-                        registerHierarchy(new ClassResource(bytes));
-                    }
-                }else {
-                    resourceManager.addResource(jarEntry.getName().contains(".class") ? registerHierarchy(new ClassResource(bytes)) : new JarResource(jarEntry.getName(), bytes));
-                }
-            }
-        }catch (IOException e) {
-            Logger.error(e, String.format("Failed to read jar file %s.", input.getAbsolutePath()));
-        }
-
-        Logger.info("Resources loaded.\n");
-
-    }
-
-    private ClassResource registerHierarchy(ClassResource classResource) {
-        ClassNode classNode = classResource.getClassNode();
-        ClassHierarchy.registerClass(classNode);
-        return classResource;
-    }
+@FunctionalInterface
+public interface JarLoader {
+    void loadJar(File input, ResourceManager resourceManager, boolean library);
 }

@@ -18,7 +18,7 @@
 
 package rip.hippo.mosey.transformer;
 
-import org.objectweb.asm.tree.ClassNode;
+import rip.hippo.mosey.asm.wrapper.ClassWrapper;
 
 /**
  * @author Hippo
@@ -26,5 +26,5 @@ import org.objectweb.asm.tree.ClassNode;
  * @since 1.0.0
  */
 public interface Transformer {
-    void transform(ClassNode classNode);
+    void transform(ClassWrapper classWrapper);
 }

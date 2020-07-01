@@ -19,7 +19,8 @@
 package rip.hippo.mosey.asm;
 
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
+import static org.objectweb.asm.Opcodes.*;
+import rip.hippo.mosey.asm.wrapper.ClassWrapper;
 
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
@@ -40,34 +41,33 @@ public final class MoseyClassWriter extends ClassWriter {
     protected String getCommonSuperClass(String type1, String type2) {
         try {
             return super.getCommonSuperClass(type1, type2);
-        }catch (Exception e) {
+        } catch (Exception e) {
             if(type1.equals(type2) || type1.equals("java/lang/Object") || type2.equals("java/lang/Object")) {
                 return type1;
             }
 
-            ClassNode lookupType1 = ClassHierarchy.lookup(type1);
-            ClassNode lookupType2 = ClassHierarchy.lookup(type2);
+            ClassWrapper lookupType1 = ClassHierarchy.lookup(type1);
+            ClassWrapper lookupType2 = ClassHierarchy.lookup(type2);
 
-            if(Modifier.isInterface(lookupType1.access) || Modifier.isInterface(lookupType2.access)) {
+            if(lookupType1.hasModifier(ACC_INTERFACE) || lookupType2.hasModifier(ACC_INTERFACE)) {
                 return "java/lang/Object";
             }
 
+            ClassWrapper lookupType1Super = ClassHierarchy.getSuperClass(lookupType1);
+            ClassWrapper lookupType2Super = ClassHierarchy.getSuperClass(lookupType2);
 
-            ClassNode lookupType1Super = ClassHierarchy.getSuperClass(lookupType1);
-            ClassNode lookupType2Super = ClassHierarchy.getSuperClass(lookupType2);
-
-            if(lookupType1Super.name.equals("java/lang/Object") || lookupType2Super.name.equals("java/lang/Object")) {
-                return lookupType1.name;
+            if(lookupType1Super.getName().equals("java/lang/Object") || lookupType2Super.getName().equals("java/lang/Object")) {
+                return lookupType1.getName();
             }
 
-            if(lookupType2Super.name.equals(lookupType1.name)) {
-                return lookupType1.name;
+            if(lookupType2Super.getName().equals(lookupType1.getName())) {
+                return lookupType1.getName();
             }
-            if(lookupType1Super.name.equals(lookupType2.name)) {
-                return lookupType2.name;
+            if(lookupType1Super.getName().equals(lookupType2.getName())) {
+                return lookupType2.getName();
             }
-            if(lookupType1Super.name.equals(lookupType2Super.name)) {
-                return lookupType1Super.name;
+            if(lookupType1Super.getName().equals(lookupType2Super.getName())) {
+                return lookupType1Super.getName();
             }
             Set<String> treeType1 = tree(lookupType1Super);
             Set<String> treeType2 = tree(lookupType2Super);
@@ -89,10 +89,10 @@ public final class MoseyClassWriter extends ClassWriter {
         }
     }
 
-    private Set<String> tree(ClassNode classNode) {
+    private Set<String> tree(ClassWrapper classNode) {
         Set<String> tree = new HashSet<>();
-        for(ClassNode superNode = ClassHierarchy.getSuperClass(classNode); !superNode.name.equals("java/lang/Object"); superNode = ClassHierarchy.getSuperClass(superNode)) {
-            tree.add(superNode.name);
+        for(ClassWrapper superNode = ClassHierarchy.getSuperClass(classNode); !superNode.getName().equals("java/lang/Object"); superNode = ClassHierarchy.getSuperClass(superNode)) {
+            tree.add(superNode.getName());
         }
         return tree;
     }

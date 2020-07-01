@@ -20,6 +20,7 @@ package rip.hippo.mosey.analyze;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+import rip.hippo.mosey.asm.wrapper.MethodWrapper;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -36,11 +37,11 @@ import java.util.stream.Collectors;
 public enum StackSizeAnalyzer {
     ;
 
-    public static Map<AbstractInsnNode, Integer> emulateStack(MethodNode methodNode) {
+    public static Map<AbstractInsnNode, Integer> emulateStack(MethodWrapper methodWrapper) {
         Map<AbstractInsnNode, Integer> instructionStackMap = new HashMap<>();
-        List<LabelNode> handlers = methodNode.tryCatchBlocks.stream().map(tcb -> tcb.handler).collect(Collectors.toList());;
+        List<LabelNode> handlers = methodWrapper.getTryCatchBlocks().stream().map(tcb -> tcb.handler).collect(Collectors.toList());;
         int stack = 0;
-        for (AbstractInsnNode abstractInsnNode : methodNode.instructions.toArray()) {
+        for (AbstractInsnNode abstractInsnNode : methodWrapper.getInstructions().toArray()) {
             if(abstractInsnNode instanceof LabelNode && handlers.contains(abstractInsnNode)) {
                 stack = 1;
             }

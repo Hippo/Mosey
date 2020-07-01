@@ -18,36 +18,16 @@
 
 package rip.hippo.mosey.jar;
 
-import rip.hippo.mosey.jar.resource.Resource;
 import rip.hippo.mosey.jar.resource.ResourceManager;
-import org.tinylog.Logger;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.jar.JarEntry;
-import java.util.jar.JarOutputStream;
 
 /**
  * @author Hippo
- * @version 1.0.0, 6/23/20
+ * @version 1.0.0, 6/30/20
  * @since 1.0.0
  */
-public final class JarExporter {
-
-    public void exportJar(ResourceManager resourceManager, File output) {
-        Logger.info("Attempting to export jar.");
-        try (JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(output))) {
-            for (Resource resource : resourceManager.getResources()) {
-                JarEntry jarEntry = new JarEntry(resource.getName());
-                jarEntry.setCompressedSize(-1);
-                jarOutputStream.putNextEntry(jarEntry);
-                jarOutputStream.write(resource.toByteArray());
-                jarOutputStream.closeEntry();
-            }
-        } catch (IOException e) {
-            Logger.error(e, String.format("Failed to write output file to %s", output.getAbsolutePath()));
-        }
-        Logger.info(String.format("Successfully written jar to %s", output.getAbsolutePath()));
-    }
+@FunctionalInterface
+public interface JarExporter {
+    void exportJar(ResourceManager resourceManager, File output);
 }

@@ -18,6 +18,7 @@
 
 package rip.hippo.mosey.transformer;
 
+import rip.hippo.mosey.asm.wrapper.ClassWrapper;
 import rip.hippo.mosey.configuration.Configuration;
 import rip.hippo.mosey.dictionary.Dictionary;
 import rip.hippo.mosey.dictionary.impl.AlphaNumericDictionary;
@@ -58,11 +59,11 @@ public final class TransformerManager {
         this.enabledTransformers = configuration.getTransformers().stream().map(transformerMap::get).collect(Collectors.toList());
     }
 
-    public void transform(ClassNode classNode) {
-        Logger.info(String.format("Transforming %s", classNode.name));
+    public void transform(ClassWrapper classWrapper) {
+        Logger.info(String.format("Transforming %s", classWrapper.getName()));
         for (Transformer transformer : enabledTransformers) {
-            transformer.transform(classNode);
+            transformer.transform(classWrapper);
         }
-        Logger.info(String.format("Successfully transformed %s", classNode.name));
+        Logger.info(String.format("Successfully transformed %s", classWrapper.getName()));
     }
 }

@@ -22,10 +22,13 @@ package rip.hippo.mosey.jar.resource.impl;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
 import org.objectweb.asm.tree.MethodNode;
 import rip.hippo.mosey.asm.MoseyClassWriter;
+import rip.hippo.mosey.asm.wrapper.ClassWrapper;
 import rip.hippo.mosey.jar.resource.Resource;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
+
+import static org.objectweb.asm.ClassReader.*;
 import static org.objectweb.asm.Opcodes.*;
 import org.tinylog.Logger;
 
@@ -36,13 +39,13 @@ import org.tinylog.Logger;
  */
 public final class ClassResource implements Resource {
 
-    private final ClassNode classNode;
+    private final ClassWrapper classWrapper;
     private final byte[] originalBytecode;
 
-    public ClassResource(byte[] bytecode) {
-        this.classNode = new ClassNode();
+    public ClassResource(byte[] bytecode, boolean library) {
         this.originalBytecode = bytecode;
-        new ClassReader(bytecode).accept(classNode, 0);
+        ClassNode classNode = new ClassNode();
+        new ClassReader(bytecode).accept(classNode, library ? SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES : 0);
 
         if (classNode.version <= V1_5) {
             Logger.info(String.format("Class %s is pre Java 6, inlining JSR instructions.", classNode.name));
@@ -53,27 +56,29 @@ public final class ClassResource implements Resource {
                 classNode.methods.set(i, jsrInlinerAdapter);
             }
         }
+        this.classWrapper = new ClassWrapper(classNode);
     }
 
     @Override
     public byte[] toByteArray() {
-        Logger.info(String.format("Converting %s.class to obfuscated bytecode, trying to compute frames.", classNode.name));
+        ClassNode classNode = classWrapper.getClassNode();
+        Logger.info(String.format("Converting %s.class to obfuscated bytecode, trying to compute frames.", classWrapper.getName()));
         ClassWriter classWriter;
         try {
             classWriter = new MoseyClassWriter(ClassWriter.COMPUTE_FRAMES);
             classNode.accept(classWriter);
         } catch (Exception e) {
             try {
-                Logger.warn(String.format("Failed computing frames, attempting to compute maxs (%s.class)", classNode.name));
+                Logger.warn(String.format("Failed computing frames, attempting to compute maxs (%s.class)", classWrapper.getName()));
                 classWriter = new MoseyClassWriter(ClassWriter.COMPUTE_MAXS);
                 classNode.accept(classWriter);
             } catch (Exception e1) {
                 try {
-                    Logger.warn(String.format("Failed computing maxes, attempting with no flags (%s.class)", classNode.name));
+                    Logger.warn(String.format("Failed computing maxes, attempting with no flags (%s.class)", classWrapper.getName()));
                     classWriter = new MoseyClassWriter(0);
                     classNode.accept(classWriter);
                 } catch (Exception e2) {
-                    Logger.error(e2, String.format("Failed to write class, resorting to original bytecode (%s.class)", classNode.name));
+                    Logger.error(e2, String.format("Failed to write class, resorting to original bytecode (%s.class)", classWrapper.getName()));
                     return originalBytecode;
                 }
             }
@@ -81,17 +86,17 @@ public final class ClassResource implements Resource {
         try {
             return classWriter.toByteArray();
         } finally {
-            Logger.info(String.format("Successfully written %s.", classNode.name));
+            Logger.info(String.format("Successfully written %s.", classWrapper.getName()));
         }
     }
 
     @Override
     public String getName() {
-        return String.format("%s.class", classNode.name);
+        return String.format("%s.class", classWrapper.getName());
     }
 
-    public ClassNode getClassNode() {
-        return classNode;
+    public ClassWrapper getClassWrapper() {
+        return classWrapper;
     }
 
 }

@@ -19,12 +19,14 @@
 package rip.hippo.mosey.transformer.impl.flow;
 
 import rip.hippo.mosey.analyze.StackSizeAnalyzer;
+import rip.hippo.mosey.asm.wrapper.ClassWrapper;
 import rip.hippo.mosey.configuration.Configuration;
 import rip.hippo.mosey.dictionary.Dictionary;
 import rip.hippo.mosey.transformer.Transformer;
-import rip.hippo.mosey.util.AsmUtil;
 import rip.hippo.mosey.util.MathUtil;
 import org.objectweb.asm.tree.*;
+import rip.hippo.mosey.util.asm.NumberInstructionUtil;
+import rip.hippo.mosey.util.asm.ObfuscatedInstructionUtil;
 
 
 import java.util.Map;
@@ -67,11 +69,11 @@ public final class FakeJumpTransformer implements Transformer {
     }
 
     @Override
-    public void transform(ClassNode classNode) {
-        for (MethodNode method : classNode.methods) {
+    public void transform(ClassWrapper classWrapper) {
+        classWrapper.applyMethods(method -> {
             Map<AbstractInsnNode, Integer> stack = StackSizeAnalyzer.emulateStack(method);
 
-            for (AbstractInsnNode abstractInsnNode : method.instructions.toArray()) {
+            for (AbstractInsnNode abstractInsnNode : method.getInstructions().toArray()) {
                 if (stack.get(abstractInsnNode) == 0 && MathUtil.chance(chance)) { // asm isn't able to compute stack map frames properly if there is a junk jump when the stack size isn't 0
                     LabelNode labelNode = new LabelNode();
                     InsnList insnList = new InsnList();
@@ -87,7 +89,7 @@ public final class FakeJumpTransformer implements Transformer {
                             insnList.add(new JumpInsnNode(follow ? IFEQ : IFNE, labelNode));
                             break;
                         case 2:
-                            insnList.add(AsmUtil.getOptimizedInt(MathUtil.generate(1, Integer.MAX_VALUE)));
+                            insnList.add(NumberInstructionUtil.getOptimizedInt(MathUtil.generate(1, Integer.MAX_VALUE)));
                             insnList.add(new JumpInsnNode(follow ? IFNE : IFEQ, labelNode));
                             break;
                         case 3:
@@ -101,18 +103,18 @@ public final class FakeJumpTransformer implements Transformer {
                             insnList.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false));
                             insnList.add(new JumpInsnNode(follow ? IFEQ : IFNE, labelNode));
                     }
-                    method.instructions.insertBefore(abstractInsnNode, insnList);
+                    method.getInstructions().insertBefore(abstractInsnNode, insnList);
                     if (follow) {
-                        method.instructions.insertBefore(abstractInsnNode, AsmUtil.generateTrashInstructions());
-                        method.instructions.insertBefore(abstractInsnNode, labelNode);
+                        method.getInstructions().insertBefore(abstractInsnNode, ObfuscatedInstructionUtil.generateTrashInstructions());
+                        method.getInstructions().insertBefore(abstractInsnNode, labelNode);
                     } else {
-                        method.instructions.add(labelNode);
-                        method.instructions.add(new InsnNode(ACONST_NULL));
-                        method.instructions.add(new InsnNode(ATHROW));
+                        method.getInstructions().add(labelNode);
+                        method.getInstructions().add(new InsnNode(ACONST_NULL));
+                        method.getInstructions().add(new InsnNode(ATHROW));
                     }
 
                 }
             }
-        }
+        });
     }
 }

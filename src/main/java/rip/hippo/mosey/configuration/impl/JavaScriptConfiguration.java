@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public final class JavaScriptConfiguration implements Configuration {
 
     private final File input, output, runtime;
-    private final Collection<String> transformers;
+    private final Collection<String> transformers, libraries;
     private final String dictionary;
     private final ScriptEngine scriptEngine;
 
@@ -69,6 +69,7 @@ public final class JavaScriptConfiguration implements Configuration {
         this.output = new File(scriptEngine.get("output").toString());
         this.runtime = new File(runtimePath);
         this.transformers = ((ScriptObjectMirror) scriptEngine.get("transformers")).values().stream().map(Object::toString).collect(Collectors.toList());
+        this.libraries = ((ScriptObjectMirror) scriptEngine.get("libraries")).values().stream().map(Object::toString).collect(Collectors.toList());
         this.dictionary = scriptEngine.get("dictionary").toString();
 
 
@@ -99,6 +100,11 @@ public final class JavaScriptConfiguration implements Configuration {
     @Override
     public Collection<String> getTransformers() {
         return transformers;
+    }
+
+    @Override
+    public Collection<String> getLibraries() {
+        return libraries;
     }
 
     @Override

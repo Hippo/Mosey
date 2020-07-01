@@ -16,22 +16,24 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package rip.hippo.mosey.configuration;
+package rip.hippo.mosey.util.asm;
 
-import java.io.File;
-import java.util.Collection;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FrameNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LineNumberNode;
+
+import static org.objectweb.asm.Opcodes.NOP;
 
 /**
  * @author Hippo
- * @version 1.0.0, 6/23/20
+ * @version 1.0.0, 6/30/20
  * @since 1.0.0
  */
-public interface Configuration {
-    File getInput();
-    File getOutput();
-    File getRuntime();
-    Collection<String> getTransformers();
-    Collection<String> getLibraries();
-    String getDictionary();
-    <T> T get(String object, String key);
+public enum InstructionUtil {
+    ;
+
+    public static boolean isDefective(AbstractInsnNode abstractInsnNode) {
+        return abstractInsnNode instanceof LabelNode || abstractInsnNode instanceof LineNumberNode || abstractInsnNode instanceof FrameNode || abstractInsnNode.getOpcode() == NOP;
+    }
 }

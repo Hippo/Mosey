@@ -18,6 +18,7 @@
 
 package rip.hippo.mosey.transformer.impl.misc;
 
+import rip.hippo.mosey.asm.wrapper.ClassWrapper;
 import rip.hippo.mosey.transformer.Transformer;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
@@ -36,20 +37,21 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 public final class SyntheticBridgeTransformer implements Transformer {
 
     @Override
-    public void transform(ClassNode classNode) {
-        for (MethodNode method : classNode.methods) {
-            if(!method.name.startsWith("<") && (method.access & ACC_BRIDGE) == 0) {
-                method.access |= ACC_BRIDGE;
+    public void transform(ClassWrapper classWrapper) {
+        classWrapper.applyMethods(method -> {
+            if (!method.getName().startsWith("<") && !method.hasModifier(ACC_BRIDGE)) {
+                method.addModifier(ACC_BRIDGE);
 
             }
-            if((method.access & ACC_SYNTHETIC) == 0) {
-                method.access |= ACC_SYNTHETIC;
+            if (!method.hasModifier(ACC_SYNTHETIC)) {
+                method.addModifier(ACC_SYNTHETIC);
             }
-        }
-        for (FieldNode field : classNode.fields) {
-            if((field.access & ACC_SYNTHETIC) == 0) {
-                field.access |= ACC_SYNTHETIC;
+        });
+
+        classWrapper.applyFields(field -> {
+            if (!field.hasModifier(ACC_SYNTHETIC)) {
+                field.addModifier(ACC_SYNTHETIC);
             }
-        }
+        });
     }
 }

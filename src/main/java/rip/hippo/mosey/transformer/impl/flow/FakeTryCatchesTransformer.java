@@ -18,11 +18,12 @@
 
 package rip.hippo.mosey.transformer.impl.flow;
 
+import rip.hippo.mosey.asm.wrapper.ClassWrapper;
 import rip.hippo.mosey.configuration.Configuration;
 import rip.hippo.mosey.transformer.Transformer;
-import rip.hippo.mosey.util.AsmUtil;
 import rip.hippo.mosey.util.MathUtil;
 import org.objectweb.asm.tree.*;
+import rip.hippo.mosey.util.asm.InstructionUtil;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -64,18 +65,18 @@ public final class FakeTryCatchesTransformer implements Transformer {
     }
 
     @Override
-    public void transform(ClassNode classNode) {
-        for (MethodNode method : classNode.methods) {
+    public void transform(ClassWrapper classWrapper) {
+        classWrapper.applyMethods(method -> {
             boolean invokedSuper = false;
-            for (AbstractInsnNode abstractInsnNode : method.instructions.toArray()) {
-                if (method.name.equals("<init>") && !invokedSuper && abstractInsnNode instanceof MethodInsnNode) {
+            for (AbstractInsnNode abstractInsnNode : method.getInstructions().toArray()) {
+                if (method.getName().equals("<init>") && !invokedSuper && abstractInsnNode instanceof MethodInsnNode) {
                     MethodInsnNode methodInsnNode = (MethodInsnNode) abstractInsnNode;
                     if(methodInsnNode.name.equals("<init>")) {
                         invokedSuper = true;
                         continue;
                     }
                 }
-                if ((!method.name.equals("<init>") || invokedSuper) && MathUtil.chance(chance) && !AsmUtil.isDefective(abstractInsnNode)) {
+                if ((!method.getName().equals("<init>") || invokedSuper) && MathUtil.chance(chance) && !InstructionUtil.isDefective(abstractInsnNode)) {
                     LabelNode start = new LabelNode();
                     LabelNode handler = new LabelNode();
                     LabelNode end = new LabelNode();
@@ -85,12 +86,12 @@ public final class FakeTryCatchesTransformer implements Transformer {
                     catchBlock.add(new InsnNode(ATHROW));
                     catchBlock.add(end);
 
-                    method.instructions.insertBefore(abstractInsnNode, start);
-                    method.instructions.insert(abstractInsnNode, catchBlock);
-                    method.instructions.insert(abstractInsnNode, new JumpInsnNode(GOTO, end));
-                    method.tryCatchBlocks.add(new TryCatchBlockNode(start, end, handler, "java/lang/Throwable"));
+                    method.getInstructions().insertBefore(abstractInsnNode, start);
+                    method.getInstructions().insert(abstractInsnNode, catchBlock);
+                    method.getInstructions().insert(abstractInsnNode, new JumpInsnNode(GOTO, end));
+                    method.getTryCatchBlocks().add(new TryCatchBlockNode(start, end, handler, "java/lang/Throwable"));
                 }
             }
-        }
+        });
     }
 }

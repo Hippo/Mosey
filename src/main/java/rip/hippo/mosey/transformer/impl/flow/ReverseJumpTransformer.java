@@ -18,9 +18,10 @@
 
 package rip.hippo.mosey.transformer.impl.flow;
 
+import rip.hippo.mosey.asm.wrapper.ClassWrapper;
 import rip.hippo.mosey.transformer.Transformer;
-import rip.hippo.mosey.util.AsmUtil;
 import org.objectweb.asm.tree.*;
+import rip.hippo.mosey.util.asm.JumpInstructionUtil;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -54,9 +55,9 @@ import static org.objectweb.asm.Opcodes.*;
 public final class ReverseJumpTransformer implements Transformer {
 
     @Override
-    public void transform(ClassNode classNode) {
-        for (MethodNode method : classNode.methods) {
-            for (AbstractInsnNode abstractInsnNode : method.instructions.toArray()) {
+    public void transform(ClassWrapper classWrapper) {
+        classWrapper.applyMethods(method -> {
+            for (AbstractInsnNode abstractInsnNode : method.getInstructions().toArray()) {
                 int opcode = abstractInsnNode.getOpcode();
                 if (opcode >= IFEQ && opcode <= IF_ACMPNE) {
                     JumpInsnNode jumpInsnNode = (JumpInsnNode) abstractInsnNode;
@@ -64,11 +65,11 @@ public final class ReverseJumpTransformer implements Transformer {
                     InsnList insnList = new InsnList();
                     insnList.add(new JumpInsnNode(GOTO, jumpInsnNode.label));
                     insnList.add(offset);
-                    jumpInsnNode.setOpcode(AsmUtil.reverseJump(opcode));
+                    jumpInsnNode.setOpcode(JumpInstructionUtil.reverseJump(opcode));
                     jumpInsnNode.label = offset;
-                    method.instructions.insert(jumpInsnNode, insnList);
+                    method.getInstructions().insert(jumpInsnNode, insnList);
                 }
             }
-        }
+        });
     }
 }

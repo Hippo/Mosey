@@ -19,8 +19,8 @@
 package rip.hippo.mosey.asm;
 
 
-import org.objectweb.asm.tree.ClassNode;
 import org.tinylog.Logger;
+import rip.hippo.mosey.asm.wrapper.ClassWrapper;
 
 import java.util.*;
 
@@ -31,33 +31,33 @@ import java.util.*;
  */
 public enum ClassHierarchy {
     ;
-    private static final Map<String, ClassNode> CLASS_LOOKUP_MAP = new HashMap<>();
-    private static final Map<ClassNode, ClassNode> CLASS_HIERARCHY_MAP = new HashMap<>();
+    private static final Map<String, ClassWrapper> CLASS_LOOKUP_MAP = new HashMap<>();
+    private static final Map<ClassWrapper, ClassWrapper> CLASS_HIERARCHY_MAP = new HashMap<>();
     
-    public static void registerClass(ClassNode classNode) {
-        CLASS_LOOKUP_MAP.put(classNode.name, classNode);
+    public static void registerClass(ClassWrapper classWrapper) {
+        CLASS_LOOKUP_MAP.put(classWrapper.getName(), classWrapper);
     }
     
-    public static ClassNode lookup(String name) {
+    public static ClassWrapper lookup(String name) {
         return CLASS_LOOKUP_MAP.get(name);
     }
 
     public static void registerAncestors() {
-        for (ClassNode classNode : CLASS_LOOKUP_MAP.values()) {
-            setSuperClass(classNode, classNode.superName);
+        for (ClassWrapper classWrapper : CLASS_LOOKUP_MAP.values()) {
+            setSuperClass(classWrapper, classWrapper.getSuperName());
         }
     }
     
-    private static void setSuperClass(ClassNode classNode, String name) {
-        ClassNode lookup = lookup(name);
+    private static void setSuperClass(ClassWrapper classWrapper, String name) {
+        ClassWrapper lookup = lookup(name);
         if(lookup == null) {
             Logger.warn(String.format("Class %s can't be found, ensure all libraries are loaded, ignoring.", name));
             return;
         }
-        CLASS_HIERARCHY_MAP.put(classNode, lookup);
+        CLASS_HIERARCHY_MAP.put(classWrapper, lookup);
     }
 
-    public static ClassNode getSuperClass(ClassNode classNode) {
-        return CLASS_HIERARCHY_MAP.get(classNode);
+    public static ClassWrapper getSuperClass(ClassWrapper classWrapper) {
+        return CLASS_HIERARCHY_MAP.get(classWrapper);
     }
 }

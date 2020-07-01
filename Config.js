@@ -18,14 +18,18 @@
 
 //TODO: Make documentation for this
 
-var input = "jars/ElseIfChainBool.jar";
-var output = "jars/ElseIfChainBool-obf.jar";
+var input = "jars/SimpleTest.jar";
+var output = "jars/SimpleTest-obf.jar";
 var runtime = "detect";
 var dictionary = "AlphaNumeric";
 
 var transformers = [
-    "BadAnnotation"
+    "FakeJump"
 ];
+
+var libraries = [
+
+]
 
 var FakeTryCatches = {
   chance: 80
