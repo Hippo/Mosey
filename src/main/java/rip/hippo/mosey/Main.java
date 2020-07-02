@@ -39,7 +39,14 @@ public enum Main {
 
     public static void main(String[] args) {
         try {
-            Configuration configuration = new JavaScriptConfiguration("Config.js"); //TODO: automatically infer the configuration type and implement them and allow user specified conifg path
+            String configPath = "Config.js";
+            for (String arg : args) {
+                if (arg.startsWith("-config=")) {
+                    configPath = arg.substring("-config=".length());
+                }
+            }
+
+            Configuration configuration = new JavaScriptConfiguration(configPath);
             Mosey obfuscator = new Mosey(configuration);
 
             obfuscator.loadRuntime();
