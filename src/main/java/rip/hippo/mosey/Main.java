@@ -23,6 +23,11 @@ import rip.hippo.mosey.configuration.Configuration;
 import rip.hippo.mosey.configuration.impl.JavaScriptConfiguration;
 import org.tinylog.Logger;
 
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+
 
 /**
  * @author Hippo
@@ -32,14 +37,13 @@ import org.tinylog.Logger;
 public enum Main {
     ;
 
-
-
     public static void main(String[] args) {
         try {
             Configuration configuration = new JavaScriptConfiguration("Config.js"); //TODO: automatically infer the configuration type and implement them and allow user specified conifg path
             Mosey obfuscator = new Mosey(configuration);
 
             obfuscator.loadRuntime();
+            configuration.getLibraries().stream().map(File::new).forEach(file -> obfuscator.loadJar(file, true));
             obfuscator.loadInput();
             ClassHierarchy.registerAncestors();
 

@@ -22,6 +22,7 @@ import rip.hippo.mosey.dictionary.Dictionary;
 import rip.hippo.mosey.util.MathUtil;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -31,16 +32,16 @@ import java.util.Set;
  */
 public final class AlphaNumericDictionary implements Dictionary {
 
-    private static final char[] CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
+    private final Random random = new Random();
     private final Set<String> reserved = new HashSet<>();
 
     @Override
     public String generate(int length) {
-        char[] sequence = new char[length];
-        for (int i = 0; i < length; i++) {
-            sequence[i] = CHARSET[MathUtil.randomInt(CHARSET.length)];
-        }
-        return new String(sequence);
+        return random.ints('0', 'z' + 1)
+                .limit(length)
+                .filter(value -> value <= '9' || (value >= 'A' && value <= 'Z') || (value >= 'a' && value <= 'z'))
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 
     @Override
@@ -49,7 +50,7 @@ public final class AlphaNumericDictionary implements Dictionary {
         int times = 0;
         while (reserved.contains(generated)) {
             generated = generate(length);
-            if(times++ > 10) { //if it fails 10 times just increment the length
+            if(times++ > 10) { //if it fails 10 times just increment the length (shitty way make better later)
                 length++;
             }
         }

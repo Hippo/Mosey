@@ -28,6 +28,10 @@ import javax.script.ScriptException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,9 +52,15 @@ public final class JavaScriptConfiguration implements Configuration {
         ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
         this.scriptEngine = scriptEngineManager.getEngineByExtension("js");
 
-        try (FileReader fileReader = new FileReader(new File(configPath))) {
-            Logger.info("Evaluating JavaScript config.");
-            scriptEngine.eval(fileReader);
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(configPath, "r")) {
+            Logger.info("Mapping config to memory....");
+            MappedByteBuffer map = randomAccessFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length());
+            Logger.info("Config mapped, evaluating...");
+            StringBuilder stringBuilder = new StringBuilder();
+            for (long i = 0; i < randomAccessFile.length(); i++) {
+                stringBuilder.append((char) map.get());
+            }
+            scriptEngine.eval(stringBuilder.toString());
             Logger.info("Config evaluated.");
         }catch (IOException | ScriptException e) {
             Logger.error(e, String.format("Failed to evaluate config \"%s.\"", configPath));
