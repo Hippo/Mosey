@@ -70,7 +70,7 @@ public final class FakeJumpTransformer implements Transformer {
 
     @Override
     public void transform(ClassWrapper classWrapper) {
-        classWrapper.applyMethods(method -> {
+        classWrapper.methods().forEach(method -> {
             Map<AbstractInsnNode, Integer> stack = StackSizeAnalyzer.emulateStack(method);
 
             for (AbstractInsnNode abstractInsnNode : method.getInstructions().toArray()) {

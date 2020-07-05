@@ -35,19 +35,40 @@ public enum NumberInstructionUtil {
     ;
 
     public static AbstractInsnNode getOptimizedInt(int value) {
-        if(value >= -1 && value <= 5) {
+        if (value >= -1 && value <= 5) {
             return new InsnNode(toConst(value));
-        } else if(value <= Short.MAX_VALUE) {
+        } else if (value <= Short.MAX_VALUE) {
             return new IntInsnNode((value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) ? BIPUSH : SIPUSH, value);
         }
         return new LdcInsnNode(value);
     }
 
-    public static int toConst(int value) {
+    private static int toConst(int value) {
         int opcode = value + 3;
-        if(opcode >= ICONST_M1 && opcode <= ICONST_5) {
+        if (opcode >= ICONST_M1 && opcode <= ICONST_5) {
             return opcode;
         }
         throw new IllegalArgumentException(String.format("Value %d can't be converted to a constant opcode.", value));
+    }
+
+    private static int fromConst(int opcode) {
+        int value = opcode - 3;
+        if (value >= -1 && value <= 5) {
+            return value;
+        }
+        throw new IllegalArgumentException(String.format("Opcode %d can't be converted to integer value.", opcode));
+    }
+
+    public static Integer extractInteger(AbstractInsnNode abstractInsnNode) {
+        if (abstractInsnNode.getOpcode() >= ICONST_M1 && abstractInsnNode.getOpcode() <= ICONST_5) {
+            return fromConst(abstractInsnNode.getOpcode());
+        }
+        if (abstractInsnNode instanceof IntInsnNode) {
+            return ((IntInsnNode) abstractInsnNode).operand;
+        }
+        if (abstractInsnNode instanceof LdcInsnNode && ((LdcInsnNode) abstractInsnNode).cst instanceof Integer) {
+            return (Integer) ((LdcInsnNode) abstractInsnNode).cst;
+        }
+        return null;
     }
 }

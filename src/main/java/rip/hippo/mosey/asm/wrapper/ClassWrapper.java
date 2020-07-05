@@ -20,6 +20,7 @@ package rip.hippo.mosey.asm.wrapper;
 
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
+import rip.hippo.mosey.util.FilteredForeachAdapter;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -53,12 +54,12 @@ public final class ClassWrapper {
         classNode.visibleAnnotations.add(annotationNode);
     }
 
-    public void applyMethods(Consumer<MethodWrapper> action) {
-        methods.forEach(action);
+    public FilteredForeachAdapter<MethodWrapper> methods() {
+        return new FilteredForeachAdapter<>(methods);
     }
 
-    public void applyFields(Consumer<FieldWrapper> action) {
-        fields.forEach(action);
+    public FilteredForeachAdapter<FieldWrapper> fields() {
+        return new FilteredForeachAdapter<>(fields);
     }
 
     public boolean hasModifier(int modifier) {

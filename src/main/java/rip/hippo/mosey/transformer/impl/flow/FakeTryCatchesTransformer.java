@@ -66,7 +66,7 @@ public final class FakeTryCatchesTransformer implements Transformer {
 
     @Override
     public void transform(ClassWrapper classWrapper) {
-        classWrapper.applyMethods(method -> {
+        classWrapper.methods().forEach(method -> {
             boolean invokedSuper = false;
             for (AbstractInsnNode abstractInsnNode : method.getInstructions().toArray()) {
                 if (method.getName().equals("<init>") && !invokedSuper && abstractInsnNode instanceof MethodInsnNode) {

@@ -52,15 +52,9 @@ public final class JavaScriptConfiguration implements Configuration {
         ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
         this.scriptEngine = scriptEngineManager.getEngineByExtension("js");
 
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(configPath, "r")) {
-            Logger.info("Mapping config to memory....");
-            MappedByteBuffer map = randomAccessFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length());
-            Logger.info("Config mapped, evaluating...");
-            StringBuilder stringBuilder = new StringBuilder();
-            for (long i = 0; i < randomAccessFile.length(); i++) {
-                stringBuilder.append((char) map.get());
-            }
-            scriptEngine.eval(stringBuilder.toString());
+        try (FileReader fileReader = new FileReader(new File(configPath))) {
+            Logger.info("Evaluating config...");
+            scriptEngine.eval(fileReader);
             Logger.info("Config evaluated.");
         }catch (IOException | ScriptException e) {
             Logger.error(e, String.format("Failed to evaluate config \"%s.\"", configPath));

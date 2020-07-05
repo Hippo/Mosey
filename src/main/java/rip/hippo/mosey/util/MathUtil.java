@@ -37,6 +37,10 @@ public enum MathUtil {
         return percentage >= generate(0, 101);
     }
 
+    public static int generate() {
+        return randomInt(Integer.MAX_VALUE);
+    }
+
     public static boolean randomBoolean() {
         return RANDOM.nextBoolean();
     }

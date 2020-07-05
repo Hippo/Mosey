@@ -56,7 +56,7 @@ public final class ReverseJumpTransformer implements Transformer {
 
     @Override
     public void transform(ClassWrapper classWrapper) {
-        classWrapper.applyMethods(method -> {
+        classWrapper.methods().forEach(method -> {
             for (AbstractInsnNode abstractInsnNode : method.getInstructions().toArray()) {
                 int opcode = abstractInsnNode.getOpcode();
                 if (opcode >= IFEQ && opcode <= IF_ACMPNE) {

@@ -38,20 +38,17 @@ public final class SyntheticBridgeTransformer implements Transformer {
 
     @Override
     public void transform(ClassWrapper classWrapper) {
-        classWrapper.applyMethods(method -> {
+        classWrapper.methods().forEach(method -> {
             if (!method.getName().startsWith("<") && !method.hasModifier(ACC_BRIDGE)) {
                 method.addModifier(ACC_BRIDGE);
-
             }
             if (!method.hasModifier(ACC_SYNTHETIC)) {
                 method.addModifier(ACC_SYNTHETIC);
             }
         });
 
-        classWrapper.applyFields(field -> {
-            if (!field.hasModifier(ACC_SYNTHETIC)) {
-                field.addModifier(ACC_SYNTHETIC);
-            }
-        });
+        classWrapper.fields()
+                .addFilter(field -> !field.hasModifier(ACC_SYNTHETIC))
+                .forEach(field -> field.addModifier(ACC_SYNTHETIC));
     }
 }

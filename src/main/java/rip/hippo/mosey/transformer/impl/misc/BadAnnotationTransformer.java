@@ -39,7 +39,7 @@ public final class BadAnnotationTransformer implements Transformer {
     @Override
     public void transform(ClassWrapper classWrapper) {
         classWrapper.addVisibleAnnotation(new AnnotationNode(""));
-        classWrapper.applyMethods(method -> method.addVisibleAnnotation(new AnnotationNode("")));
-        classWrapper.applyFields(field -> field.addVisibleAnnotation(new AnnotationNode("")));
+        classWrapper.methods().forEach(method -> method.addVisibleAnnotation(new AnnotationNode("")));
+        classWrapper.fields().forEach(field -> field.addVisibleAnnotation(new AnnotationNode("")));
     }
 }

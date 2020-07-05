@@ -67,4 +67,8 @@ public final class MethodWrapper {
     public String getName() {
         return methodNode.name;
     }
+
+    public int getMaxLocals() {
+        return methodNode.maxLocals;
+    }
 }

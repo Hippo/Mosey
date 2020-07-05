@@ -18,13 +18,13 @@
 
 //TODO: Make documentation for this
 
-var input = "jars/SimpleTest.jar";
-var output = "jars/SimpleTest-obf.jar";
+var input = "jars/ElseIfChainBool.jar";
+var output = "jars/ElseIfChainBool-obf.jar";
 var runtime = "detect";
 var dictionary = "AlphaNumeric";
 
 var transformers = [
-    "FakeJump"
+    "ConfusingSwitch"
 ];
 
 var libraries = [
@@ -38,3 +38,7 @@ var FakeTryCatches = {
 var FakeJump = {
   chance: 90
 };
+
+var ConfusingSwitch = {
+    constants: true, chance: 80
+}

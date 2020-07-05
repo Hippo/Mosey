@@ -23,6 +23,7 @@ import rip.hippo.mosey.configuration.Configuration;
 import rip.hippo.mosey.dictionary.Dictionary;
 import rip.hippo.mosey.dictionary.impl.AlphaNumericDictionary;
 import rip.hippo.mosey.jar.resource.ResourceManager;
+import rip.hippo.mosey.transformer.impl.flow.ConfusingSwitchTransformer;
 import rip.hippo.mosey.transformer.impl.flow.FakeJumpTransformer;
 import rip.hippo.mosey.transformer.impl.flow.FakeTryCatchesTransformer;
 import rip.hippo.mosey.transformer.impl.flow.ReverseJumpTransformer;
@@ -55,6 +56,7 @@ public final class TransformerManager {
         transformerMap.put("FakeTryCatches", new FakeTryCatchesTransformer(configuration));
         transformerMap.put("FakeJump", new FakeJumpTransformer(configuration, dictionary));
         transformerMap.put("BadAnnotation", new BadAnnotationTransformer());
+        transformerMap.put("ConfusingSwitch", new ConfusingSwitchTransformer(configuration));
 
         this.enabledTransformers = configuration.getTransformers().stream().map(transformerMap::get).collect(Collectors.toList());
     }
