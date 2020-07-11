@@ -2,7 +2,7 @@ package rip.hippo.mosey.configuration.impl
 
 import java.io.{File, FileReader, IOException}
 
-import javax.script.ScriptEngineManager
+import javax.script.{ScriptEngineManager, ScriptException}
 import jdk.nashorn.api.scripting.ScriptObjectMirror
 import rip.hippo.mosey.configuration.Configuration
 import rip.hippo.mosey.logger.Logger
@@ -18,17 +18,17 @@ final class JavaScriptConfiguration(configPath: String) extends Configuration {
 
   private val scriptEngineManager = new ScriptEngineManager()
   private val scriptEngine = scriptEngineManager.getEngineByExtension("js")
-  private val fileReader = new FileReader(new File(configPath))
+  private var fileReader: FileReader = _
 
   try {
+    fileReader = new FileReader(new File(configPath))
     Logger.info("Evaluating config...")
     scriptEngine.eval(fileReader)
     Logger.info("Config evaluated.")
   } catch {
-    case e: IOException => Logger.error(e, String.format("Failed to evaluate config %s.", configPath))
-  } finally {
-    fileReader.close()
-  }
+    case e@(_: IOException | _: ScriptException) => Logger.error(e, String.format("Failed to evaluate config %s.", configPath))
+  } finally if(fileReader != null) fileReader.close()
+
 
   private var runtimePath = scriptEngine.get("runtime").toString
 

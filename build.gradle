@@ -19,3 +19,20 @@ dependencies {
     compile group: 'org.tinylog', name: 'tinylog-api', version: '2.1.2'
     compile group: 'org.tinylog', name: 'tinylog-impl', version: '2.1.2'
 }
+
+jar {
+    from {
+        configurations.compile.collect {
+            if (!it.isDirectory()) {
+                zipTree(it)
+            }
+        }
+    }
+
+    manifest {
+        attributes(
+                "Manifest-Version": 1.0,
+                "Main-Class": "rip.hippo.mosey.Main"
+        )
+    }
+}
