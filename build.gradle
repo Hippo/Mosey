@@ -1,35 +1,17 @@
-/*
- * Mosey is a free and open source java bytecode obfuscator.
- *     Copyright (C) 2020  Hippo
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 plugins {
     id 'java'
+    id 'scala'
 }
 
-group 'me.hippo'
+group 'rip.hippo'
 version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    compile group: 'org.scala-lang', name: 'scala-library', version: '2.13.3'
     compile group: 'org.ow2.asm', name: 'asm', version: '7.1'
     compile group: 'org.ow2.asm', name: 'asm-tree', version: '7.1'
     compile group: 'org.ow2.asm', name: 'asm-util', version: '7.1'
