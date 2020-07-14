@@ -2,6 +2,7 @@ package rip.hippo.mosey.jar
 
 import java.io.File
 
+import rip.hippo.mosey.configuration.Configuration
 import rip.hippo.mosey.jar.resource.ResourceManager
 
 /**
@@ -10,5 +11,5 @@ import rip.hippo.mosey.jar.resource.ResourceManager
  * @since 1.0.0
  */
 trait JarLoader {
-  def loadJar(input: File, resourceManager: ResourceManager, library: Boolean, inlineJSR: Boolean): Unit
+  def loadJar(input: File, resourceManager: ResourceManager, library: Boolean, configuration: Configuration): Unit
 }

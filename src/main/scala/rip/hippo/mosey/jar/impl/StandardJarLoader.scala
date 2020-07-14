@@ -4,6 +4,7 @@ import java.io.{File, IOException}
 import java.util.jar.JarFile
 
 import rip.hippo.mosey.asm.ClassHierarchy
+import rip.hippo.mosey.configuration.Configuration
 import rip.hippo.mosey.jar.JarLoader
 import rip.hippo.mosey.jar.resource.ResourceManager
 import rip.hippo.mosey.jar.resource.impl.{ClassResource, JarResource}
@@ -18,8 +19,10 @@ import rip.hippo.mosey.util.IOUtil
  */
 final class StandardJarLoader extends JarLoader {
 
-  override def loadJar(input: File, resourceManager: ResourceManager, library: Boolean, inlineJSR: Boolean): Unit = {
-    Logger.info(String.format("Loading %s " + (if (library) "(library) " else ""), input.getAbsolutePath))
+  override def loadJar(input: File, resourceManager: ResourceManager, library: Boolean, configuration: Configuration): Unit = {
+    val log = !library || (library && configuration.shouldLogLibraries)
+    if (log) Logger.info(String.format("Loading %s " + (if (library) "(library) " else ""), input.getAbsolutePath))
+
     try {
       val jarFile = new JarFile(input)
       val entries = jarFile.entries()
@@ -27,20 +30,20 @@ final class StandardJarLoader extends JarLoader {
         val jarEntry = entries.nextElement()
         val bytes = IOUtil.toByteArray(jarFile, jarEntry)
         val classFile = jarEntry.getName.contains(".class")
-        Logger.info(String.format("Loading resource %s", jarEntry.getName))
+        if (log) Logger.info(String.format("Loading resource %s", jarEntry.getName))
         if (library) {
           if (classFile) {
-            registerHierarchy(ClassResource(bytes, true, inlineJSR))
+            registerHierarchy(ClassResource(bytes, true, configuration.shouldInlineJSR))
           }
         } else {
-          resourceManager.addResource(if (classFile) registerHierarchy(ClassResource(bytes, false, inlineJSR)) else JarResource(jarEntry.getName, bytes))
+          resourceManager.addResource(if (classFile) registerHierarchy(ClassResource(bytes, false, configuration.shouldInlineJSR)) else JarResource(jarEntry.getName, bytes))
         }
       }
       jarFile.close()
     } catch {
       case e: IOException => Logger.error(e, String.format("Failed to read jar file %s", input.getAbsolutePath))
     }
-    Logger.info("Resources loaded.\n")
+    if (log) Logger.info("Resources loaded.\n")
   }
 
   def registerHierarchy(classResource: ClassResource): ClassResource = {

@@ -21,7 +21,7 @@ final class Mosey(configuration: Configuration, jarLoader: JarLoader = new Stand
 
   def loadRuntime: Unit = loadJar(configuration.getRuntime, true)
   def loadInput: Unit = loadJar(configuration.getInput, false)
-  def loadJar(input: File, library: Boolean): Unit = jarLoader.loadJar(input, resourceManager , library, configuration.shouldInlineJSR)
+  def loadJar(input: File, library: Boolean): Unit = jarLoader.loadJar(input, resourceManager , library, configuration)
   def transform: Unit = {
     Logger.info("Transforming jar...")
     resourceManager.resources.filter(resource => resource.isInstanceOf[ClassResource]).foreach(resource => transformerManager.transform(resource.asInstanceOf[ClassResource].classWrapper))

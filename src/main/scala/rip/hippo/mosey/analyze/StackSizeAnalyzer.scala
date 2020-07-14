@@ -8,6 +8,7 @@ import org.objectweb.asm.Opcodes._
 import org.objectweb.asm.Type
 import org.objectweb.asm.tree.{AbstractInsnNode, FieldInsnNode, InvokeDynamicInsnNode, LabelNode, LdcInsnNode, MethodInsnNode, MultiANewArrayInsnNode, TryCatchBlockNode}
 import rip.hippo.mosey.asm.wrapper.MethodWrapper
+import rip.hippo.mosey.logger.Logger
 
 import scala.collection.mutable.ListBuffer
 
@@ -53,9 +54,11 @@ object StackSizeAnalyzer {
         case F2L =>
         case F2D =>
         case NEW =>
-          if (instruction.isInstanceOf[LdcInsnNode]) {
-            val ldcInsnNode = instruction.asInstanceOf[LdcInsnNode]
-            if (ldcInsnNode.cst.isInstanceOf[Double] || ldcInsnNode.cst.isInstanceOf[Long]) stack += 1
+        case JSR =>
+          instruction match {
+            case ldcInsnNode: LdcInsnNode if ldcInsnNode.cst.isInstanceOf[Double] || ldcInsnNode.cst.isInstanceOf[Long] => stack += 1
+            case _ if instruction.getOpcode == JSR => Logger.warn("Found JSR instruction while analyzing stack, this may produce undefined behavior.")
+            case _ =>
           }
           stack += 1
 

@@ -12,6 +12,7 @@ trait Configuration {
   def getOutput: File
   def getRuntime: File
   def shouldInlineJSR: Boolean
+  def shouldLogLibraries: Boolean
   def getTransformers: List[String]
   def getLibraries: List[File]
   def getDictionary: String

@@ -23,6 +23,7 @@ var output = "jars/ElseIfChainBool-obf.jar";
 var runtime = "detect";
 var dictionary = "AlphaNumeric";
 var inlineJSR = true
+var logLibraries = false
 
 var transformers = [
     "ConfusingSwitch"
