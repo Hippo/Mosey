@@ -17,12 +17,12 @@ import rip.hippo.mosey.logger.Logger
  * @version 1.0.0, 7/9/20
  * @since 1.0.0
  */
-class ClassResource(bytecode: Bytecode, library: Boolean) extends Resource() {
+class ClassResource(bytecode: Bytecode, library: Boolean, inlineJSR: Boolean) extends Resource() {
   private val originalBytecode: Bytecode = bytecode;
   private val classNode: ClassNode = new ClassNode()
   new ClassReader(bytecode).accept(classNode, if (library) SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES else 0)
 
-  if (classNode.version <= V1_5) {
+  if (inlineJSR && classNode.version <= V1_5) {
     Logger.info(String.format("Class %s is pre Java 6, inlining JSR instructions.", classNode.name))
     for (i <- 0 until classNode.methods.size()) {
       val methodNode = classNode.methods.get(i)
@@ -72,5 +72,5 @@ class ClassResource(bytecode: Bytecode, library: Boolean) extends Resource() {
 
 object ClassResource {
   type Bytecode = Array[Byte]
-  def apply(bytecode: Bytecode, library: Boolean): ClassResource = new ClassResource(bytecode, library)
+  def apply(bytecode: Bytecode, library: Boolean, inlineJSR: Boolean): ClassResource = new ClassResource(bytecode, library, inlineJSR)
 }

@@ -45,6 +45,7 @@ final class JavaScriptConfiguration(configPath: String) extends Configuration {
 
   val input = new File(scriptEngine.get("input").toString)
   val output = new File(scriptEngine.get("output").toString)
+  val inlineJSR = scriptEngine.get("inlineJSR").asInstanceOf[Boolean]
   val transformers: ListBuffer[String] = ListBuffer()
   scriptEngine.get("transformers").asInstanceOf[ScriptObjectMirror].values().stream().map(ref => ref.toString).forEach(string => transformers += string)
   val libraries: ListBuffer[File] = ListBuffer()
@@ -56,6 +57,8 @@ final class JavaScriptConfiguration(configPath: String) extends Configuration {
   override def getOutput: File = output
 
   override def getRuntime: File = runtime
+
+  override def shouldInlineJSR: Boolean = inlineJSR
 
   override def getTransformers: List[String] = transformers.result()
 

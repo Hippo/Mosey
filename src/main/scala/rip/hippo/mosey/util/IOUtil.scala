@@ -11,6 +11,7 @@ import java.util.jar.{JarEntry, JarFile}
  */
 object IOUtil {
 
+
   def toByteArray(jarFile: JarFile, jarEntry: JarEntry): Array[Byte] = {
     val inputStream = jarFile.getInputStream(jarEntry)
     val byteArrayOutputStream = new ByteArrayOutputStream()

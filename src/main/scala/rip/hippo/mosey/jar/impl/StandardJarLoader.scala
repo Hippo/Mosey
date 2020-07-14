@@ -18,7 +18,7 @@ import rip.hippo.mosey.util.IOUtil
  */
 final class StandardJarLoader extends JarLoader {
 
-  override def loadJar(input: File, resourceManager: ResourceManager, library: Boolean): Unit = {
+  override def loadJar(input: File, resourceManager: ResourceManager, library: Boolean, inlineJSR: Boolean): Unit = {
     Logger.info(String.format("Loading %s " + (if (library) "(library) " else ""), input.getAbsolutePath))
     try {
       val jarFile = new JarFile(input)
@@ -30,10 +30,10 @@ final class StandardJarLoader extends JarLoader {
         Logger.info(String.format("Loading resource %s", jarEntry.getName))
         if (library) {
           if (classFile) {
-            registerHierarchy(ClassResource(bytes, true))
+            registerHierarchy(ClassResource(bytes, true, inlineJSR))
           }
         } else {
-          resourceManager.addResource(if (classFile) registerHierarchy(ClassResource(bytes, false)) else JarResource(jarEntry.getName, bytes))
+          resourceManager.addResource(if (classFile) registerHierarchy(ClassResource(bytes, false, inlineJSR)) else JarResource(jarEntry.getName, bytes))
         }
       }
       jarFile.close()

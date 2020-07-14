@@ -10,5 +10,5 @@ import rip.hippo.mosey.jar.resource.ResourceManager
  * @since 1.0.0
  */
 trait JarLoader {
-  def loadJar(input: File, resourceManager: ResourceManager, library: Boolean): Unit
+  def loadJar(input: File, resourceManager: ResourceManager, library: Boolean, inlineJSR: Boolean): Unit
 }
