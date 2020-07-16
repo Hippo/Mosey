@@ -1,6 +1,7 @@
 package rip.hippo.mosey
 
 import logger.Logger
+import org.objectweb.asm.tree.JumpInsnNode
 import rip.hippo.mosey.asm.ClassHierarchy
 import rip.hippo.mosey.configuration.impl.JavaScriptConfiguration
 
@@ -21,6 +22,7 @@ object Main {
       mosey.loadInput
       ClassHierarchy.registerSuperclasses
 
+      JumpInsnNode
       mosey.transform
 
       mosey.exportJar

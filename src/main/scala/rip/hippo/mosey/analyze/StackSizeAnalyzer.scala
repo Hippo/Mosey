@@ -29,32 +29,32 @@ object StackSizeAnalyzer {
       if (instruction.isInstanceOf[LabelNode] && handlers.contains(instruction)) stack = 1
       instructionStackMap += (instruction -> stack)
       instruction.getOpcode match {
-        case ACONST_NULL =>
-        case ICONST_M1 =>
-        case ICONST_0 =>
-        case ICONST_1 =>
-        case ICONST_2 =>
-        case ICONST_3 =>
-        case ICONST_4 =>
-        case ICONST_5 =>
-        case FCONST_0 =>
-        case FCONST_1 =>
-        case FCONST_2 =>
-        case BIPUSH =>
-        case SIPUSH =>
-        case LDC =>
-        case ILOAD =>
-        case FLOAD =>
-        case ALOAD =>
-        case DUP =>
-        case DUP_X1 =>
-        case DUP_X2 =>
-        case I2L =>
-        case I2D =>
-        case F2L =>
-        case F2D =>
-        case NEW =>
-        case JSR =>
+        case ACONST_NULL |
+             ICONST_M1 |
+             ICONST_0 |
+             ICONST_1 |
+             ICONST_2 |
+             ICONST_3 |
+             ICONST_4 |
+             ICONST_5 |
+             FCONST_0 |
+             FCONST_1 |
+             FCONST_2 |
+             BIPUSH |
+             SIPUSH |
+             LDC |
+             ILOAD |
+             FLOAD |
+             ALOAD |
+             DUP |
+             DUP_X1 |
+             DUP_X2 |
+             I2L |
+             I2D |
+             F2L |
+             F2D |
+             NEW |
+             JSR =>
           instruction match {
             case ldcInsnNode: LdcInsnNode if ldcInsnNode.cst.isInstanceOf[Double] || ldcInsnNode.cst.isInstanceOf[Long] => stack += 1
             case _ if instruction.getOpcode == JSR => Logger.warn("Found JSR instruction while analyzing stack, this may produce undefined behavior.")
@@ -62,145 +62,134 @@ object StackSizeAnalyzer {
           }
           stack += 1
 
-        case LCONST_0 =>
-        case LCONST_1 =>
-        case DCONST_0 =>
-        case DCONST_1 =>
-        case LLOAD =>
-        case DLOAD =>
-        case DUP2 =>
-        case DUP2_X1 =>
-        case DUP2_X2 =>
-          stack += 2
+        case LCONST_0 |
+             LCONST_1 |
+             DCONST_0 |
+             DCONST_1 |
+             LLOAD |
+             DLOAD |
+             DUP2 |
+             DUP2_X1 |
+             DUP2_X2 => stack += 2
 
-        // (ref, index) -> (value)
-        case IALOAD =>
-        case FALOAD =>
-        case AALOAD =>
-        case BALOAD =>
-        case CALOAD =>
-        case SALOAD =>
-        case ISTORE =>
-        case FSTORE =>
-        case POP =>
-        case IADD =>
-        case FADD =>
-        case ISUB =>
-        case FSUB =>
-        case IMUL =>
-        case FMUL =>
-        case IDIV =>
-        case FDIV =>
-        case IREM =>
-        case FREM =>
-        case ISHL =>
-        case ISHR =>
-        case IUSHR =>
-        // (long, int) -> (result)
-        case LSHL =>
-        case LSHR =>
-        case LUSHR =>
-        case IAND =>
-        case IOR =>
-        case IXOR =>
-        case L2I =>
-        case L2F =>
-        case D2I =>
-        case D2F =>
-        // (float, float) -> (int)
-        case FCMPL =>
-        case FCMPG =>
-        case IFEQ =>
-        case IFNE =>
-        case IFLT =>
-        case IFGE =>
-        case IFGT =>
-        case IFLE =>
-        case IFNULL =>
-        case IFNONNULL =>
-        // (index) -> ()
-        case TABLESWITCH =>
-        // (key) -> ()
-        case LOOKUPSWITCH =>
-        case IRETURN =>
-        case FRETURN =>
-        case ARETURN =>
-        case ATHROW =>
-        // (ref) -> ()
-        case MONITORENTER =>
-        case MONITOREXIT =>
-          stack -= 1
+             // (ref, index) -> (value)
+        case IALOAD |
+             FALOAD |
+             AALOAD |
+             BALOAD |
+             CALOAD |
+             SALOAD |
+             ISTORE |
+             FSTORE |
+             POP |
+             IADD |
+             FADD |
+             ISUB |
+             FSUB |
+             IMUL |
+             FMUL |
+             IDIV |
+             FDIV |
+             IREM |
+             FREM |
+             ISHL |
+             ISHR |
+             IUSHR |
+             // (long, int) -> (result)
+             LSHL |
+             LSHR |
+             LUSHR |
+             IAND |
+             IOR |
+             IXOR |
+             L2I |
+             L2F |
+             D2I |
+             D2F |
+             // (float, float) -> (int)
+             FCMPL |
+             FCMPG |
+             IFEQ |
+             IFNE |
+             IFLT |
+             IFGE |
+             IFGT |
+             IFLE |
+             IFNULL |
+             IFNONNULL |
+             // (index) -> ()
+             TABLESWITCH |
+             // (key) -> ()
+             LOOKUPSWITCH |
+             IRETURN |
+             FRETURN |
+             ARETURN |
+             ATHROW |
+             // (ref) -> ()
+             MONITORENTER |
+             MONITOREXIT => stack -= 1
 
-        case LSTORE =>
-        case DSTORE =>
-        case POP2 =>
-        case LADD =>
-        case DADD =>
-        case LSUB =>
-        case DSUB =>
-        case LMUL =>
-        case DMUL =>
-        case LDIV =>
-        case DDIV =>
-        case LREM =>
-        case DREM =>
-        case LAND =>
-        case LOR =>
-        case LXOR =>
-        // (int, int) -> ()
-        case IF_ICMPEQ =>
-        case IF_ICMPNE =>
-        case IF_ICMPLT =>
-        case IF_ICMPGE =>
-        case IF_ICMPGT =>
-        case IF_ICMPLE =>
-        case LRETURN =>
-        case DRETURN =>
-          stack -= 2
+        case LSTORE |
+             DSTORE |
+             POP2 |
+             LADD |
+             DADD |
+             LSUB |
+             DSUB |
+             LMUL |
+             DMUL |
+             LDIV |
+             DDIV |
+             LREM |
+             DREM |
+             LAND |
+             LOR |
+             LXOR |
+             // (int, int) -> ()
+             IF_ICMPEQ |
+             IF_ICMPNE |
+             IF_ICMPLT |
+             IF_ICMPGE |
+             IF_ICMPGT |
+             IF_ICMPLE |
+             LRETURN |
+             DRETURN => stack -= 2
 
-        // (ref, index, value) -> ()
-        case IASTORE =>
-        case FASTORE =>
-        case AASTORE =>
-        case BASTORE =>
-        case CASTORE =>
-        case SASTORE =>
-        // (long, long) -> (int)
-        case LCMP =>
-        // (double, double) -> (int)
-        case DCMPL =>
-        case DCMPG =>
-          stack -= 3
+             // (ref, index, value) -> ()
+        case IASTORE |
+             FASTORE |
+             AASTORE |
+             BASTORE |
+             CASTORE |
+             SASTORE |
+             // (long, long) -> (int)
+             LCMP |
+             // (double, double) -> (int)
+             DCMPL |
+             DCMPG => stack -= 3
 
-        // (ref, index, long) -> ()
-        case LASTORE =>
-        // (ref, index, double) -> ()
-        case DASTORE =>
-          stack -= 4
+             // (ref, index, long) -> ()
+        case LASTORE |
+             // (ref, index, double) -> ()
+             DASTORE => stack -= 4
 
-        case GETSTATIC =>
-          stack += getFieldStackSize(instruction)
+        case GETSTATIC => stack += getFieldStackSize(instruction)
 
-        case PUTSTATIC =>
-          stack -= getFieldStackSize(instruction)
+        case PUTSTATIC => stack -= getFieldStackSize(instruction)
 
-        case GETFIELD =>
-          stack += getFieldStackSize(instruction) - 1 // ref
+        case GETFIELD => stack += getFieldStackSize(instruction) - 1 // ref
 
-        case PUTFIELD =>
-          stack -= getFieldStackSize(instruction) + 1
+        case PUTFIELD => stack -= getFieldStackSize(instruction) + 1
 
-        case INVOKEVIRTUAL =>
-        case INVOKESPECIAL =>
-        case INVOKEINTERFACE =>
-          stack += getMethodStackSize(instruction) - 1
+        case INVOKEVIRTUAL |
+             INVOKESPECIAL |
+             INVOKEINTERFACE => stack += getMethodStackSize(instruction) - 1
 
-        case INVOKEDYNAMIC =>
-        case INVOKESTATIC =>
-          stack += getMethodStackSize(instruction)
+        case INVOKEDYNAMIC |
+             INVOKESTATIC => stack += getMethodStackSize(instruction)
 
-        case MULTIANEWARRAY =>
-          stack -= instruction.asInstanceOf[MultiANewArrayInsnNode].dims - 1
+        case MULTIANEWARRAY => stack -= instruction.asInstanceOf[MultiANewArrayInsnNode].dims - 1
+
         case _ =>
       }
     })
