@@ -15,6 +15,7 @@ final class SyntheticBridgeTransformer extends Transformer {
     classWrapper.methods.foreach(method => {
       if (!method.getName.startsWith("<") && !method.hasModifier(ACC_BRIDGE)) method.addModifier(ACC_BRIDGE)
       if (!method.hasModifier(ACC_SYNTHETIC)) method.addModifier(ACC_SYNTHETIC)
+
     })
     classWrapper.fields.filter(field => !field.hasModifier(ACC_SYNTHETIC)).foreach(field => field.addModifier(ACC_SYNTHETIC))
   }

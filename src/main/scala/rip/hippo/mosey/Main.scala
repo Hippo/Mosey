@@ -22,7 +22,6 @@ object Main {
       mosey.loadInput
       ClassHierarchy.registerSuperclasses
 
-      JumpInsnNode
       mosey.transform
 
       mosey.exportJar

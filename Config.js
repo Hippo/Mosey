@@ -33,6 +33,10 @@ var libraries = [
 
 ]
 
+var exclude = [
+    "me/hippo"
+]
+
 var FakeTryCatches = {
   chance: 80
 };

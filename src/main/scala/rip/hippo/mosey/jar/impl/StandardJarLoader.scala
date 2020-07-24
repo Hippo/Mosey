@@ -14,7 +14,7 @@ import rip.hippo.mosey.util.IOUtil
 
 /**
  * @author Hippo
- * @version 1.0.0, 7/9/20
+ * @version 1.1.0, 7/9/20
  * @since 1.0.0
  */
 final class StandardJarLoader extends JarLoader {
@@ -22,6 +22,8 @@ final class StandardJarLoader extends JarLoader {
   override def loadJar(input: File, resourceManager: ResourceManager, library: Boolean, configuration: Configuration): Unit = {
     val log = !library || (library && configuration.shouldLogLibraries)
     if (log) Logger.info(String.format("Loading %s " + (if (library) "(library) " else ""), input.getAbsolutePath))
+
+    val exclude: String => Boolean = x => configuration.getExcluded.exists(exclude => x.startsWith(exclude))
 
     try {
       val jarFile = new JarFile(input)
@@ -36,7 +38,7 @@ final class StandardJarLoader extends JarLoader {
             registerHierarchy(ClassResource(bytes, true, configuration.shouldInlineJSR))
           }
         } else {
-          resourceManager.addResource(if (classFile) registerHierarchy(ClassResource(bytes, false, configuration.shouldInlineJSR)) else JarResource(jarEntry.getName, bytes))
+          resourceManager.addResource(if (classFile && !exclude(jarEntry.getName)) registerHierarchy(ClassResource(bytes, false, configuration.shouldInlineJSR)) else JarResource(jarEntry.getName, bytes))
         }
       }
       jarFile.close()

@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 
 /**
  * @author Hippo
- * @version 1.0.0, 7/10/20
+ * @version 2.0.0, 7/10/20
  * @since 1.0.0
  */
 final class JavaScriptConfiguration(configPath: String) extends Configuration {
@@ -51,6 +51,9 @@ final class JavaScriptConfiguration(configPath: String) extends Configuration {
   scriptEngine.get("transformers").asInstanceOf[ScriptObjectMirror].values().stream().map(ref => ref.toString).forEach(string => transformers += string)
   val libraries: ListBuffer[File] = ListBuffer()
   scriptEngine.get("libraries").asInstanceOf[ScriptObjectMirror].values().stream().map(ref => new File(ref.toString)).forEach(file => libraries += file)
+  val excluded: ListBuffer[String] = ListBuffer()
+  scriptEngine.get("exclude").asInstanceOf[ScriptObjectMirror].values().stream().map(ref => ref.toString).forEach(string => excluded += string)
+
   val dictionary: String = scriptEngine.get("dictionary").toString
 
   override def getInput: File = input
@@ -66,6 +69,8 @@ final class JavaScriptConfiguration(configPath: String) extends Configuration {
   override def getTransformers: List[String] = transformers.result()
 
   override def getLibraries: List[File] = libraries.result()
+
+  override def getExcluded: List[String] = excluded.result()
 
   override def getDictionary: String = dictionary
 
