@@ -26,7 +26,7 @@ var inlineJSR = true
 var logLibraries = false
 
 var transformers = [
-    "ConfusingSwitch"
+    "FakeTryCatches"
 ];
 
 var libraries = [
@@ -34,7 +34,6 @@ var libraries = [
 ]
 
 var exclude = [
-    "me/hippo"
 ]
 
 var FakeTryCatches = {
