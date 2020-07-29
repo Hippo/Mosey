@@ -6,6 +6,7 @@ import rip.hippo.mosey.dictionary.Dictionary
 import rip.hippo.mosey.dictionary.impl.AlphaNumericDictionary
 import rip.hippo.mosey.jar.resource.ResourceManager
 import rip.hippo.mosey.logger.Logger
+import rip.hippo.mosey.transformer.impl.exploits.{ClassEntryHiderTransformer, InvalidJumpRangeTransformer}
 import rip.hippo.mosey.transformer.impl.flow.{ConfusingSwitchTransformer, FakeJumpTransformer, FakeTryCatchesTransformer, ReverseJumpTransformer}
 import rip.hippo.mosey.transformer.impl.misc.{BadAnnotationTransformer, SyntheticBridgeTransformer}
 
@@ -26,7 +27,9 @@ final class TransformerManager(configuration: Configuration, resourceManager: Re
     "FakeTryCatches" -> new FakeTryCatchesTransformer(configuration),
     "FakeJump" -> new FakeJumpTransformer(configuration, dictionary),
     "BadAnnotation" -> new BadAnnotationTransformer,
-    "ConfusingSwitch" -> new ConfusingSwitchTransformer(configuration)
+    "ConfusingSwitch" -> new ConfusingSwitchTransformer(configuration),
+    "JumpRange" -> new InvalidJumpRangeTransformer,
+    "ClassEntryHider" -> new ClassEntryHiderTransformer
   )
 
   private val enabledTransformers = configuration.getTransformers.map(name => transformerMap(name))

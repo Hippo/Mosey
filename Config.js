@@ -26,7 +26,7 @@ var inlineJSR = true
 var logLibraries = false
 
 var transformers = [
-    "FakeTryCatches"
+    "JumpRange"
 ];
 
 var libraries = [

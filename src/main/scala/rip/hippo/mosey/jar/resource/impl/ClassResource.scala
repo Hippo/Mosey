@@ -18,7 +18,7 @@ import rip.hippo.mosey.logger.Logger
  * @since 1.0.0
  */
 class ClassResource(bytecode: Bytecode, library: Boolean, inlineJSR: Boolean) extends Resource() {
-  private val originalBytecode: Bytecode = bytecode;
+  private val originalBytecode: Bytecode = bytecode
   private val classNode: ClassNode = new ClassNode()
   new ClassReader(bytecode).accept(classNode, if (library) SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES else 0)
 
@@ -34,8 +34,7 @@ class ClassResource(bytecode: Bytecode, library: Boolean, inlineJSR: Boolean) ex
 
   val classWrapper = new ClassWrapper(classNode)
 
-  override def getName: String =
-    String.format("%s.class", classWrapper.getName)
+  override def getName: String = classWrapper.archiveName
 
   override def toByteArray: Bytecode = {
     val classNode = classWrapper.getClassNode
