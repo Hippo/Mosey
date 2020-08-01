@@ -10,7 +10,7 @@ import rip.hippo.mosey.transformer.impl.data.string.impl.LightStringEncryptionIn
 /**
  * @author Hippo
  * @version 1.0.0, 7/31/20
- * @since 1.0.0
+ * @since 1.3.0
  *
  * Well, encrypts strings, nothing more than that eh?
  */
