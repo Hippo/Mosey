@@ -43,9 +43,13 @@ final class FakeTryCatchesTransformer(configuration: Configuration) extends Tran
   override def transform(classWrapper: ClassWrapper): Unit = {
     classWrapper.methods.foreach(method => {
       var invokedSuper = false
+      val superCount = method.getInstructions.toArray.count(_.getOpcode == INVOKESPECIAL)
+      var currentSuper = 0
       method.getInstructions.toArray.foreach(instruction => {
         if (method.getName.equals("<init>") && !invokedSuper && instruction.isInstanceOf[MethodInsnNode] && instruction.asInstanceOf[MethodInsnNode].name.equals("<init>")) {
-          invokedSuper = true
+          currentSuper += 1
+          if (currentSuper == superCount)
+            invokedSuper = true
         } else {
           if ((!method.getName.equals("<init>") || invokedSuper) && MathUtil.chance(chance) && !InstructionUtil.isDefective(instruction)) {
             val start = new LabelNode

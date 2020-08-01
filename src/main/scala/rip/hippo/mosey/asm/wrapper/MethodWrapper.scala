@@ -2,6 +2,7 @@ package rip.hippo.mosey.asm.wrapper
 
 import java.util
 
+import org.objectweb.asm.Attribute
 import org.objectweb.asm.tree.{AnnotationNode, InsnList, MethodNode, TryCatchBlockNode}
 
 /**
@@ -27,6 +28,10 @@ final class MethodWrapper(methodNode: MethodNode) {
   def getInstructions: InsnList = methodNode.instructions
 
   def getTryCatchBlocks: util.List[TryCatchBlockNode] = methodNode.tryCatchBlocks
+
+  def getAttributes: util.List[Attribute] = methodNode.attrs
+
+  def createAttributes: Unit = methodNode.attrs = new util.ArrayList[Attribute]()
 
   def getMaxLocals: Int = methodNode.maxLocals
 

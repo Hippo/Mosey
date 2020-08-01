@@ -2,6 +2,7 @@ package rip.hippo.mosey.asm.wrapper
 
 import java.util
 
+import org.objectweb.asm.Attribute
 import org.objectweb.asm.tree.{AnnotationNode, ClassNode, FieldNode, MethodNode}
 
 import scala.collection.mutable.ListBuffer
@@ -28,10 +29,25 @@ final class ClassWrapper(classNode: ClassNode) {
     classNode.visibleAnnotations.add(annotationNode)
   }
 
-  def addMethod(methodNode: MethodNode): Unit =
+  def addMethod(methodNode: MethodNode): MethodWrapper = {
+    val wrapped = new MethodWrapper(methodNode)
     classNode.methods.add(0, methodNode)
+    methods += wrapped
+    wrapped
+  }
+
+  def addField(fieldNode: FieldNode): FieldWrapper = {
+    val wrapped = new FieldWrapper(fieldNode)
+    classNode.fields.add(0, fieldNode)
+    fields += wrapped
+    wrapped
+  }
 
   def hasModifier(modifier: Int): Boolean = (classNode.access & modifier) != 0
+
+  def getAttributes: util.List[Attribute] = classNode.attrs
+
+  def createAttributes: Unit = classNode.attrs = new util.ArrayList[Attribute]()
 
   def getName: String = classNode.name
 

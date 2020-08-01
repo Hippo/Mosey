@@ -16,34 +16,86 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-//TODO: Make documentation for this
-
+// Set input path to jar
 var input = "jars/ElseIfChainBool.jar";
+
+// Set export path
 var output = "jars/ElseIfChainBool-obf.jar";
+
+// Leave empty if you have JAVA_HOME environment variable set, if not then manually set it to rt.jar
 var runtime = "detect";
+
+// Select a dictionary
+/**
+ * Dictionary Types:
+ * - AlphaNumeric (a-Z | 0-9)
+ */
 var dictionary = "AlphaNumeric";
+
+// Weather to inline JSR instructions, if you don't know what that is just leave it be
 var inlineJSR = true
+
+// Weather to log information about loading/exporting libraries
 var logLibraries = false
 
+//Select a list of transformers
+/**
+ * Note: Visit the transformer class itself to get more information about a specific transformer.
+ * Transformers:
+ * - BadAnnotation
+ * - SyntheticBridge (hides code)
+ * - ReverseJump
+ * - FakeTryCatches
+ * - FakeJump
+ * - ConfusingSwitch
+ * - JumpRange
+ * - ClassEntryHider (hides class zip entries)
+ * - BadAttribute
+ * - StringEncryption
+ */
 var transformers = [
-    "JumpRange"
+    "StringEncryption"
 ];
 
+// Add the path to all the library jars your jar depends on
 var libraries = [
 
 ]
 
+// Add any classes you would like to exclude (not obfuscate), note that this is case sensitive
+// Adding "org" here would exclude any class beginning with "org" (including package names, eg org.someone.lib.LibClass)
 var exclude = [
 ]
 
+
 var FakeTryCatches = {
+    // The chance it will wrap around an instruction
   chance: 80
 };
 
 var FakeJump = {
+    // The chance it will insert a jump
   chance: 90
 };
 
 var ConfusingSwitch = {
-    constants: true, chance: 80
+    // If it will confuse constants
+    constants: true,
+    // The chance the switch will be inserted
+    chance: 80
+}
+
+var BadAttribute = {
+    // If to use bad annotation default attributes
+    annotation: true,
+    // If to use bad code attributes
+    code: true,
+    // If to use bad module attributes
+    module: true,
+    // If to use bad nest host attributes
+    nest: true
+}
+
+var StringEncryption = {
+    intensity: "light"
 }

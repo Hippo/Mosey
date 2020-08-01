@@ -7,6 +7,8 @@ import rip.hippo.mosey.configuration.impl.JavaScriptConfiguration
 
 object Main {
 
+
+
   def main(args: Array[String]): Unit = {
     try {
       val configPath = args.find(arg => arg.startsWith("-config")) match {

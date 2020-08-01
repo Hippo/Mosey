@@ -2,6 +2,7 @@ package rip.hippo.mosey.asm.wrapper
 
 import java.util
 
+import org.objectweb.asm.Attribute
 import org.objectweb.asm.tree.{AnnotationNode, FieldNode}
 
 /**
@@ -23,4 +24,9 @@ final class FieldWrapper(fieldNode: FieldNode) {
     }
     fieldNode.visibleAnnotations.add(annotationNode)
   }
+
+  def getAttributes: util.List[Attribute] = fieldNode.attrs
+
+  def createAttributes: Unit = fieldNode.attrs = new util.ArrayList[Attribute]()
+
 }
