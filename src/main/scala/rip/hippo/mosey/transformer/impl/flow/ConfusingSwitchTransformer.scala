@@ -38,9 +38,9 @@ final class ConfusingSwitchTransformer(configuration: Configuration) extends Tra
         setTrash.add(new VarInsnNode(ISTORE, secondIndex))
 
         method.getInstructions.toArray.foreach(instruction => {
-          Option(NumberInstructionUtil.extractInteger(instruction)) match {
+          NumberInstructionUtil.extractInteger(instruction) match {
             case None =>
-            case Some(value) if stack.get(instruction) == 0 && constants && MathUtil.chance(chance) =>
+            case Some(value) if stack(instruction) == 0 && constants && MathUtil.chance(chance) =>
               val trapSwitch = new InsnList
               val real = new LabelNode
               val fake = new LabelNode

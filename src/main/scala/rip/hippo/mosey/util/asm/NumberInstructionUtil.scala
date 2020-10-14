@@ -32,12 +32,12 @@ object NumberInstructionUtil {
     throw new IllegalArgumentException(String.format("Opcode %d can't be converted to integer value.", opcode))
   }
 
-  def extractInteger(abstractInsnNode: AbstractInsnNode): Integer = {
+  def extractInteger(abstractInsnNode: AbstractInsnNode): Option[Integer] = {
     abstractInsnNode match {
-      case insn if insn.getOpcode >= ICONST_M1 && abstractInsnNode.getOpcode <= ICONST_5 => fromConst(insn.getOpcode)
-      case int: IntInsnNode => int.operand
-      case ldc: LdcInsnNode if ldc.cst.isInstanceOf[Integer] => ldc.cst.asInstanceOf[Integer]
-      case _ => null
+      case insn if insn.getOpcode >= ICONST_M1 && abstractInsnNode.getOpcode <= ICONST_5 => Option(fromConst(insn.getOpcode))
+      case int: IntInsnNode => Option(int.operand)
+      case ldc: LdcInsnNode if ldc.cst.isInstanceOf[Integer] => Option(ldc.cst.asInstanceOf[Integer])
+      case _ => None
     }
   }
 
