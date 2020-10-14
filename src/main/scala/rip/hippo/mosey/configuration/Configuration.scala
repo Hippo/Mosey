@@ -16,6 +16,7 @@ trait Configuration {
   def getTransformers: List[String]
   def getLibraries: List[File]
   def getExcluded: List[String]
+  def getIncluded: List[String]
   def getDictionary: String
   def get[T](parent: String, key: String): T
 

@@ -67,6 +67,12 @@ var libraries = [
 var exclude = [
 ]
 
+// To include everything (subtracted by excludes) leave this array empty
+// If you only want to obfuscate specific classes add them here
+// Exclusion dominates inclusion
+var include = [
+
+]
 
 var FakeTryCatches = {
     // The chance it will wrap around an instruction

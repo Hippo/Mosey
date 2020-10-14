@@ -48,11 +48,13 @@ final class JavaScriptConfiguration(configPath: String) extends Configuration {
   val inlineJSR: Boolean = scriptEngine.get("inlineJSR").asInstanceOf[Boolean]
   val logLibraries: Boolean = scriptEngine.get("logLibraries").asInstanceOf[Boolean]
   val transformers: ListBuffer[String] = ListBuffer()
-  scriptEngine.get("transformers").asInstanceOf[ScriptObjectMirror].values().stream().map(ref => ref.toString).forEach(string => transformers += string)
+  scriptEngine.get("transformers").asInstanceOf[ScriptObjectMirror].values().stream().map(_.toString).forEach(transformers.addOne)
   val libraries: ListBuffer[File] = ListBuffer()
-  scriptEngine.get("libraries").asInstanceOf[ScriptObjectMirror].values().stream().map(ref => new File(ref.toString)).forEach(file => libraries += file)
+  scriptEngine.get("libraries").asInstanceOf[ScriptObjectMirror].values().stream().map(ref => new File(ref.toString)).forEach(libraries.addOne)
   val excluded: ListBuffer[String] = ListBuffer()
-  scriptEngine.get("exclude").asInstanceOf[ScriptObjectMirror].values().stream().map(ref => ref.toString).forEach(string => excluded += string)
+  scriptEngine.get("exclude").asInstanceOf[ScriptObjectMirror].values().stream().map(_.toString).forEach(excluded.addOne)
+  val included: ListBuffer[String] = ListBuffer()
+  scriptEngine.get("include").asInstanceOf[ScriptObjectMirror].values().stream().map(_.toString).forEach(included.addOne)
 
   val dictionary: String = scriptEngine.get("dictionary").toString
 
@@ -71,6 +73,8 @@ final class JavaScriptConfiguration(configPath: String) extends Configuration {
   override def getLibraries: List[File] = libraries.result()
 
   override def getExcluded: List[String] = excluded.result()
+
+  override def getIncluded: List[String] = included.result()
 
   override def getDictionary: String = dictionary
 

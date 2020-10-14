@@ -23,7 +23,9 @@ final class StandardJarLoader extends JarLoader {
     val log = !library || (library && configuration.shouldLogLibraries)
     if (log) Logger.info(String.format("Loading %s " + (if (library) "(library) " else ""), input.getAbsolutePath))
 
-    val exclude: String => Boolean = x => configuration.getExcluded.exists(exclude => x.startsWith(exclude))
+    val exclude: String => Boolean =
+      x => configuration.getExcluded.exists(x.startsWith) ||
+        (configuration.getIncluded.nonEmpty && !configuration.getIncluded.exists(x.startsWith))
 
     try {
       val jarFile = new JarFile(input)
