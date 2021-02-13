@@ -6,7 +6,8 @@ Written in Scala.
 - Actually decent string encryption
 - Number obfuscation
 - Name obfuscation
-- Use bytehippo instead of asm (way in the future)
+- Better flow obfuscation
+- Use [HippoCafe](https://www.github.com/hippo/hippocafe) instead of asm (way in the future)
 
 # Discord
 Feel free to join my discord and ask questions or just hang out.

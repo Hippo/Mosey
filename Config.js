@@ -17,10 +17,10 @@
  */
 
 // Set input path to jar
-var input = "jars/ElseIfChainBool.jar";
+var input = "jars/SupremeCommons.jar";
 
 // Set export path
-var output = "jars/ElseIfChainBool-obf.jar";
+var output = "jars/SupremeCommons-obf.jar";
 
 // Leave empty if you have JAVA_HOME environment variable set, if not then manually set it to rt.jar
 var runtime = "detect";
@@ -54,17 +54,26 @@ var logLibraries = false
  * - StringEncryption
  */
 var transformers = [
-    "StringEncryption"
+    "BadAnnotation", "StringEncryption"
 ];
 
 // Add the path to all the library jars your jar depends on
 var libraries = [
 
-]
+];
 
 // Add any classes you would like to exclude (not obfuscate), note that this is case sensitive
 // Adding "org" here would exclude any class beginning with "org" (including package names, eg org.someone.lib.LibClass)
 var exclude = [
+    "me/savag3/commons/supreme/auth",
+    "me/savag3/commons/support/impl",
+    "me/savag3/commons/XMaterial",
+    "me/savag3/commons/shade/com/sun",
+    "me/savag3/commons/shade/javaassist",
+    "me/savag3/commons/shade/oshi",
+    "me/savag3/commons/shade/com/google/gson",
+    "me/savag3/commons/gson",
+    "me/savag3/commons/external"
 ]
 
 // To include everything (subtracted by excludes) leave this array empty

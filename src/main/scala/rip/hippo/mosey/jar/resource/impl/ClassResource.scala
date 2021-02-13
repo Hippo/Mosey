@@ -55,6 +55,7 @@ class ClassResource(bytecode: Bytecode, library: Boolean, inlineJSR: Boolean) ex
               classWriter = MoseyClassWriter(0)
               classNode.accept(classWriter)
             } catch {
+
               case e: Exception =>
                 Logger.error(e, String.format("Failed to write class, resorting to original bytecode (%s.class)", classWrapper.getName))
                 return originalBytecode
@@ -62,6 +63,7 @@ class ClassResource(bytecode: Bytecode, library: Boolean, inlineJSR: Boolean) ex
         }
     }
     try {
+      classWriter.newUTF8("Protected by Mosey - Hippo")
       classWriter.toByteArray
     } finally {
       Logger.info(String.format("Successfully written %s.", classWrapper.getName))
