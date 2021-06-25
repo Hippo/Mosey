@@ -4,8 +4,8 @@ import rip.hippo.slog.Logger
 
 /**
  * @author Hippo
- * @version 1.0.0, 6/25/21
- * @since 1.0.0
+ * @version 2.0.0, 6/25/21
+ * @since 2.0.0
  */
 object Mosey {
 
