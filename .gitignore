@@ -1,0 +1,13 @@
+# SBT
+/target/
+project/*
+!project/build.properties
+
+# IDEA
+.idea
+
+#OSX
+.DS_Store
+
+# Git
+.git/
